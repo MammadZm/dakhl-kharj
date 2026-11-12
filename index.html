@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b5a45">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="دخل‌وخرج">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>دخل‌وخرج من</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#38bdf8;--sky-d:#0284c7;--sky-l:#e0f4fe;--em:#0b5a45;--em-m:#12795c;--em-l:#d8efe6;--bg:#f2faff;--ink:#0d2a26;--mut:#5b7a78;--red:#c2410c;box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:'Vazirmatn',Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0px)}
+header{background:linear-gradient(135deg,var(--sky-d),var(--em));color:#fff;padding:14px 16px 18px;border-radius:0 0 26px 26px}
+header .row{display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:18px;margin:0;font-weight:800}
+.ic{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:12px;padding:8px 12px;font:inherit;font-size:13px}
+.mn{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:10px;font-weight:600}
+.mn button{background:rgba(255,255,255,.2);border:0;color:#fff;width:34px;height:34px;border-radius:50%;font-size:18px}
+main{padding:14px 14px calc(88px + env(safe-area-inset-bottom,0px))}
+.card{background:#fff;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(11,90,69,.08)}
+.card h3{margin:0 0 10px;font-size:15px;color:var(--em)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--sky-l);border-radius:14px;padding:10px 6px;text-align:center}
+.stat small{display:block;color:var(--mut);font-size:11px}
+.stat b{font-size:14px}
+.stat.g{background:var(--em-l);color:var(--em)}
+.pos{color:var(--em-m)}.neg{color:var(--red)}
+input,select,button.pr{font:inherit;font-size:15px}
+input,select{width:100%;padding:11px 12px;border:1.5px solid #cfe6ef;border-radius:12px;background:#fff;color:var(--ink);margin-bottom:8px}
+input:focus,select:focus{outline:2px solid var(--sky);border-color:var(--sky)}
+button.pr{width:100%;border:0;border-radius:12px;padding:12px;background:linear-gradient(135deg,var(--em-m),var(--em));color:#fff;font-weight:600}
+button.sk{background:linear-gradient(135deg,var(--sky),var(--sky-d))}
+button.ln{background:none;border:1.5px solid var(--sky);color:var(--sky-d);border-radius:12px;padding:10px;font:inherit;width:100%;margin-top:8px}
+.li{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #e6f1f5;font-size:14px}
+.li:last-child{border:0}
+.li small{color:var(--mut);display:block}
+.x{background:none;border:0;color:var(--red);font-size:18px;padding:4px 8px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .h{font-size:11px;color:var(--mut);padding:4px 0}
+.d{aspect-ratio:1/1.05;border-radius:12px;background:#f3f9fc;border:1.5px solid transparent;font:inherit;font-size:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:var(--ink);padding:0}
+.d small{font-size:9px;color:var(--em-m);font-weight:600}
+.d.has{background:var(--em-l)}
+.d.td{border-color:var(--sky)}
+.d.sel{background:var(--em);color:#fff}.d.sel small{color:#bfe9d9}
+.bar{height:9px;border-radius:6px;background:var(--sky-l);overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sky),var(--em-m))}
+nav{position:fixed;bottom:0;inset-inline:0;background:#fff;display:flex;border-top:1px solid #d6e9f0;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 16px rgba(2,132,199,.08)}
+nav button{flex:1;border:0;background:none;padding:10px 0 9px;font:inherit;font-size:12px;color:var(--mut)}
+nav button span{display:block;font-size:20px}
+nav button.on{color:var(--em);font-weight:800}
+#lock{position:fixed;inset:0;background:linear-gradient(160deg,var(--sky-d),var(--em));display:flex;align-items:center;justify-content:center;padding:24px;z-index:9}
+#lock .box{background:#fff;border-radius:24px;padding:24px;width:100%;max-width:340px;text-align:center}
+#lock h2{margin:0 0 6px;color:var(--em)}
+#lock p{color:var(--mut);font-size:13px;margin:0 0 14px}
+#lock input{text-align:center;letter-spacing:8px;font-size:20px}
+.err{color:var(--red);font-size:13px;min-height:20px}
+#toast{position:fixed;bottom:96px;inset-inline:20px;background:var(--em);color:#fff;padding:11px;border-radius:12px;text-align:center;font-size:14px;display:none;z-index:10}
+#aiout{white-space:pre-wrap;line-height:1.9;font-size:14px;margin-top:10px}
+.emp{color:var(--mut);font-size:13px;text-align:center;padding:8px}
+.note{font-size:12px;color:var(--mut);line-height:1.8}
+.lb{display:block;font-size:12px;color:var(--mut);margin:2px 4px 4px}
+.dp{display:flex;gap:6px;margin-bottom:8px}
+.dp select{flex:1;min-width:0;margin:0;padding:11px 6px;text-align:center}
+.calc{margin:4px 0 10px}
+.seg{display:flex;background:var(--sky-l);border-radius:12px;padding:3px;margin-bottom:6px}.seg button{flex:1;border:0;background:none;padding:8px;border-radius:10px;font:inherit;font-size:13px;color:var(--mut)}.seg button.on{background:#fff;color:var(--em);font-weight:800;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.lg{display:flex;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid #e6f1f5;font-size:14px}.lg i{width:12px;height:12px;border-radius:4px;flex:none}.lg span{flex:1}.lg small{color:var(--mut);width:40px;text-align:left}
+.det{background:var(--bg);border-radius:12px;padding:4px 10px;margin:4px 0 6px}.det .li{padding:6px 0;font-size:13px}.arc{cursor:pointer}
+</style>
+</head>
+<body>
+<div id="lock"></div>
+<div id="shell" hidden>
+<header>
+  <div class="row"><h1>دخل‌وخرج من</h1><button class="ic" onclick="lockNow()">🔒 قفل</button></div>
+  <div class="mn"><button onclick="mv(1)">›</button><span id="mlabel"></span><button onclick="mv(-1)">‹</button></div>
+</header>
+<main id="app"></main>
+<nav id="nav"></nav>
+</div>
+<div id="toast"></div>
+<input type="file" id="rf" accept=".json,application/json" hidden onchange="onFile(this.files[0])">
+
+<script>
+/* ---------- تبدیل تاریخ شمسی/میلادی ---------- */
+function g2j(gy,gm,gd){var m=[0,31,59,90,120,151,181,212,243,273,304,334],y2=gm>2?gy+1:gy,d=355666+365*gy+~~((y2+3)/4)-~~((y2+99)/100)+~~((y2+399)/400)+gd+m[gm-1],jy=-1595+33*~~(d/12053);d%=12053;jy+=4*~~(d/1461);d%=1461;if(d>365){jy+=~~((d-1)/365);d=(d-1)%365}var jm=d<186?1+~~(d/31):7+~~((d-186)/30),jd=1+(d<186?d%31:(d-186)%30);return[jy,jm,jd]}
+function j2g(jy,jm,jd){jy+=1595;var d=-355668+365*jy+~~(jy/33)*8+~~((jy%33+3)/4)+jd+(jm<7?(jm-1)*31:(jm-7)*30+186),gy=400*~~(d/146097);d%=146097;if(d>36524){gy+=100*~~(--d/36524);d%=36524;if(d>=365)d++}gy+=4*~~(d/1461);d%=1461;if(d>365){gy+=~~((d-1)/365);d=(d-1)%365}var gd=d+1,a=[0,31,(gy%4==0&&gy%100!=0)||gy%400==0?29:28,31,30,31,30,31,31,30,31,30,31],gm;for(gm=0;gm<13;gm++){var v=a[gm];if(gd<=v)break;gd-=v}return[gy,gm,gd]}
+
+/* ---------- ابزارها ---------- */
+const $=s=>document.querySelector(s);
+const MONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const CATS=['خوراک','حمل‌ونقل','قبض و اجاره','تفریح','خرید','سلامت','آموزش','اقساط','سایر'];
+const p2=n=>String(n).padStart(2,'0');
+const fmt=n=>Math.round(n).toLocaleString('fa-IR');
+const fa=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const num=s=>+String(s).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٬,،\s]/g,'');
+const decN=s=>parseFloat(String(s).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٫،,]/g,'.'))||0;
+function grp(el){
+  const raw=el.value,pos=el.selectionStart==null?raw.length:el.selectionStart;
+  const before=raw.slice(0,pos).replace(/[^\d۰-۹]/g,'').length;
+  const dg=raw.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g,'').replace(/^0+(?=\d)/,'');
+  const out=fa(dg.replace(/\B(?=(\d{3})+(?!\d))/g,'٬'));
+  el.value=out;
+  let c=0,i=0;for(;i<out.length&&c<before;i++)if(/[۰-۹]/.test(out[i]))c++;
+  try{el.setSelectionRange(i,i)}catch(e){}}
+const defDay=()=>{const t=todayJ();return(jy==t[0]&&jm==t[1])?t[2]:1};
+function dOpts(y,m,d){const n=dim(y,m),s=Math.min(d,n);let h='';for(let i=1;i<=n;i++)h+=`<option value="${i}"${i==s?' selected':''}>${fa(i)}</option>`;return h}
+function dpick(id,y,m,d){
+  const t=todayJ()[0],a=Math.min(t-6,y),b=Math.max(t+12,y);let ys='';
+  for(let i=a;i<=b;i++)ys+=`<option value="${i}"${i==y?' selected':''}>${fa(i)}</option>`;
+  return`<div class="dp"><select id="${id}d" aria-label="روز">${dOpts(y,m,d)}</select><select id="${id}m" aria-label="ماه" onchange="dpFix('${id}')">${MONTHS.map((n,i)=>`<option value="${i+1}"${i+1==m?' selected':''}>${n}</option>`).join('')}</select><select id="${id}y" aria-label="سال" onchange="dpFix('${id}')">${ys}</select></div>`}
+function dpFix(id){const y=+$('#'+id+'y').value,m=+$('#'+id+'m').value,d=+$('#'+id+'d').value;$('#'+id+'d').innerHTML=dOpts(y,m,d)}
+const dpGet=id=>[+$('#'+id+'y').value,+$('#'+id+'m').value,+$('#'+id+'d').value];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const todayJ=()=>{const d=new Date();return g2j(d.getFullYear(),d.getMonth()+1,d.getDate())};
+const iso=(y,m,d)=>{const g=j2g(y,m,d);return g[0]+'-'+p2(g[1])+'-'+p2(g[2])};
+const jOf=s=>{const[a,b,c]=s.split('-').map(Number);return g2j(a,b,c)};
+const ymk=(y,m)=>y+'-'+p2(m);
+const U=(y,m)=>{const g=j2g(y,m,1);return Date.UTC(g[0],g[1]-1,g[2])};
+const dim=(y,m)=>(U(m==12?y+1:y,m==12?1:m+1)-U(y,m))/864e5;
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2600)}
+
+/* ---------- رمزنگاری و ذخیره امن ---------- */
+const enc=new TextEncoder(),dec=new TextDecoder();
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+const ub=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+let db=null,key=null,salt=null,pending=null,restoreMode='app';
+async function derive(pin,s){const m=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:s,iterations:250000,hash:'SHA-256'},m,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function save(){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(JSON.stringify(db)));localStorage.setItem('vault',JSON.stringify({s:b64(salt),i:b64(iv),d:b64(ct)}))}
+async function open(pin){const v=JSON.parse(localStorage.getItem('vault'));const s=ub(v.s),k=await derive(pin,s);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:ub(v.i)},k,ub(v.d));db=JSON.parse(dec.decode(pt));db.ins=db.ins||[];key=k;salt=s}
+
+/* ---------- صفحه قفل ---------- */
+function showLock(){
+  $('#shell').hidden=true;$('#lock').style.display='flex';
+  const has=!!localStorage.getItem('vault')&&!pending;
+  $('#lock').innerHTML=`<div class="box"><div style="font-size:38px">🔐</div><h2>${has?'ورود':'ساخت رمز عبور'}</h2>
+  <p>${has?'رمز خود را وارد کنید':(pending?'بکاپ خوانده شد. یک رمز جدید ۴ تا ۸ رقمی برای برنامه انتخاب کنید.':'یک رمز عددی ۴ تا ۸ رقمی انتخاب کنید. اطلاعات با همین رمز رمزنگاری می‌شود و بدون آن قابل بازیابی نیست.')}</p>
+  <input id="p1" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••">
+  ${has?'':'<input id="p2" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="تکرار رمز">'}
+  <div class="err" id="err"></div>
+  <button class="pr" onclick="${has?'doUnlock()':'doSetup()'}">${has?'ورود':'ساخت و ورود'}</button>
+  ${has?'<button class="ln" style="border-color:#e0b9a8;color:var(--red)" onclick="wipe()">فراموشی رمز / پاک‌کردن همه اطلاعات</button>':''}
+  ${pending?'':'<button class="ln" onclick="pickFile(\'lock\')">بازگردانی از فایل بکاپ</button>'}</div>`;
+  setTimeout(()=>$('#p1').focus(),50);
+}
+async function doSetup(){
+  const a=num($('#p1').value),b=num($('#p2').value),e=$('#err');
+  if(!/^\d{4,8}$/.test(String(a)+'')&&!/^\d{4,8}$/.test($('#p1').value.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))){e.textContent='رمز باید ۴ تا ۸ رقم باشد';return}
+  if($('#p1').value!==$('#p2').value){e.textContent='دو رمز یکسان نیست';return}
+  const pin=$('#p1').value.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+  salt=crypto.getRandomValues(new Uint8Array(16));key=await derive(pin,salt);
+  db=pending||{inc:[],exp:[],ins:[],set:{key:'',model:'gpt-4o-mini'}};pending=null;await save();start();
+}
+async function doUnlock(){
+  const e=$('#err'),wait=+localStorage.getItem('until')||0;
+  if(Date.now()<wait){e.textContent='چند ثانیه بعد دوباره تلاش کنید ('+fa(Math.ceil((wait-Date.now())/1000))+')';return}
+  const pin=$('#p1').value.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+  try{await open(pin);localStorage.setItem('fails',0);start()}
+  catch(x){const f=(+localStorage.getItem('fails')||0)+1;localStorage.setItem('fails',f);
+    if(f>=5)localStorage.setItem('until',Date.now()+30000*Math.pow(2,Math.min(f-5,6)));
+    e.textContent='رمز اشتباه است';$('#p1').value=''}
+}
+function wipe(){if(confirm('همه اطلاعات برای همیشه پاک می‌شود. مطمئنید؟')){localStorage.clear();showLock()}}
+function lockNow(){db=null;key=null;showLock()}
+/* قفل خودکار */
+let idle;const arm=()=>{clearTimeout(idle);if(db)idle=setTimeout(lockNow,120000)};
+['touchstart','click','keydown'].forEach(ev=>addEventListener(ev,arm,{passive:true}));
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&db){clearTimeout(idle);idle=setTimeout(lockNow,20000)}else arm()});
+
+/* ---------- برنامه ---------- */
+let tab='home',jy,jm,sel;
+function start(){$('#lock').style.display='none';$('#shell').hidden=false;const t=todayJ();jy=t[0];jm=t[1];sel=t[2];render();arm()}
+function mv(n){jm+=n;if(jm>12){jm=1;jy++}if(jm<1){jm=12;jy--}const t=todayJ();sel=(jy==t[0]&&jm==t[1])?t[2]:1;render()}
+const mExp=()=>db.exp.filter(e=>{const j=jOf(e.d);return j[0]==jy&&j[1]==jm});
+const mInc=()=>db.inc.filter(i=>i.ym==ymk(jy,jm));
+const sum=a=>a.reduce((s,x)=>s+x.a,0);
+function setTab(t){tab=t;render()}
+
+function render(){
+  $('#mlabel').textContent=MONTHS[jm-1]+' '+fa(jy);
+  const T=[['home','🏠','خانه'],['cal','📅','خرج روزانه'],['inc','💰','درآمد'],['ins','🧾','اقساط'],['rep','📊','گزارش']];
+  $('#nav').innerHTML=T.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="setTab('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join('');
+  $('#app').innerHTML={home:vHome,cal:vCal,inc:vInc,ins:vIns,rep:vRep}[tab]();if(tab=='ins')calcUI();
+}
+function stats(){const i=sum(mInc()),e=sum(mExp());return{i,e,r:i-e}}
+function statHTML(){const s=stats();return`<div class="grid3"><div class="stat g"><small>درآمد</small><b>${fmt(s.i)}</b></div><div class="stat"><small>خرج</small><b>${fmt(s.e)}</b></div><div class="stat ${s.r<0?'':'g'}"><small>مانده</small><b class="${s.r<0?'neg':'pos'}">${fmt(s.r)}</b></div></div>`}
+function expList(a,del){return a.length?a.map(e=>`<div class="li"><div>${esc(e.c)} <small>${esc(e.n||'')}${e.n?' · ':''}${fa(jOf(e.d)[2])} ${MONTHS[jOf(e.d)[1]-1]}</small></div><div><b>${fmt(e.a)}</b>${del?`<button class="x" onclick="delExp('${e.id}')">✕</button>`:''}</div></div>`).join(''):'<div class="emp">هنوز خرجی ثبت نشده</div>'}
+
+let cscope='m',copen=null;
+const PAL=['#0284c7','#0b5a45','#38bdf8','#12795c','#7dd3fc','#34d399','#075985','#a7f3d0','#94a3b8'];
+const colOf=c=>{const i=CATS.indexOf(c);return PAL[i<0?PAL.length-1:i%PAL.length]};
+function togCat(c){copen=copen==c?null:c;render()}
+function chartCard(){
+  const list=cscope=='m'?mExp():db.exp,tot=sum(list),by={};
+  list.forEach(e=>by[e.c]=(by[e.c]||0)+e.a);
+  const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+  const seg=`<div class="seg"><button class="${cscope=='m'?'on':''}" onclick="cscope='m';copen=null;render()">این ماه</button><button class="${cscope=='a'?'on':''}" onclick="cscope='a';copen=null;render()">کل زمان</button></div>`;
+  if(!tot)return`<div class="card" id="pie"><h3>خرج‌ها کجا رفت؟</h3>${seg}<div class="emp">هنوز خرجی ثبت نشده</div></div>`;
+  let off=25,arcs='';
+  rows.forEach(([c,v])=>{const pc=v/tot*100;arcs+=`<circle class="arc" cx="21" cy="21" r="15.915" fill="none" stroke="${colOf(c)}" stroke-width="6.5" stroke-dasharray="${pc} ${100-pc}" stroke-dashoffset="${off}" onclick="togCat('${c}')"></circle>`;off-=pc});
+  const ts=fmt(tot),fs=Math.min(4,15/(ts.length*0.62));
+  const svg=`<svg viewBox="0 0 42 42" role="img" aria-label="نمودار دایره‌ای خرج‌ها" style="width:190px;height:190px;display:block;margin:6px auto"><circle cx="21" cy="21" r="15.915" fill="none" stroke="#e6f1f5" stroke-width="6.5"/>${arcs}<text x="21" y="19.5" text-anchor="middle" font-size="2.8" fill="#5b7a78">جمع خرج</text><text x="21" y="24.6" text-anchor="middle" font-size="${fs}" font-weight="800" fill="#0b5a45">${ts}</text></svg>`;
+  const lg=rows.map(([c,v])=>{
+    let det='';
+    if(copen==c){const g={};list.filter(e=>e.c==c).forEach(e=>{const k=e.n||'بدون توضیح';g[k]=(g[k]||0)+e.a});
+      det='<div class="det">'+Object.entries(g).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([k,a])=>`<div class="li"><span>${esc(k)}</span><b>${fmt(a)}</b></div>`).join('')+'</div>'}
+    return`<div class="lg" onclick="togCat('${c}')"><i style="background:${colOf(c)}"></i><span>${c}</span><b>${fmt(v)}</b><small>${fa(Math.round(v/tot*100))}٪</small></div>${det}`}).join('');
+  return`<div class="card" id="pie"><h3>خرج‌ها کجا رفت؟</h3>${seg}${svg}${lg}<div class="note" style="margin-top:6px">روی هر دسته بزنید تا ببینید دقیقاً کجا خرج شده.</div></div>`;
+}
+function vHome(){
+  const s=stats(),pct=s.i>0?Math.min(100,s.e/s.i*100):0,un=db.ins.filter(p=>insDue(p,jy,jm)&&!(p.paid||{})[ymk(jy,jm)]).length;
+  const last=[...mExp()].sort((a,b)=>b.d.localeCompare(a.d)||b.id.localeCompare(a.id)).slice(0,5);
+  return`${un?'<div class="card" style="background:var(--em-l)"><b>🧾 '+fa(un)+' قسط این ماه پرداخت نشده</b><button class="ln" onclick="setTab(\'ins\')">رفتن به اقساط</button></div>':''}${due()?'<div class="card" style="background:var(--sky-l)"><b>⏰ وقت بکاپ است</b><div class="note">بیش از یک ماه از آخرین بکاپ گذشته.</div><button class="pr sk" style="margin-top:8px" onclick="setTab(\'rep\')">رفتن به بخش بکاپ</button></div>':''}<div class="card">${statHTML()}<div class="note" style="margin-top:10px">${s.i>0?fa(Math.round(pct))+'٪ از درآمد این ماه خرج شده':'ابتدا درآمد ماه را در بخش «درآمد» ثبت کنید'}</div><div class="bar"><i style="width:${pct}%"></i></div></div>
+  ${chartCard()}<div class="card"><h3>آخرین خرج‌ها</h3>${expList(last,false)}<button class="pr sk" style="margin-top:10px" onclick="setTab('cal')">+ ثبت خرج امروز</button></div>${installCard()}`;
+}
+function insDue(p,y,m){const i=y*12+m-(p.sy*12+p.sm);return i>=0&&i<p.n?i+1:0}
+function vIns(){
+  const ym=ymk(jy,jm),t=todayJ(),isNow=jy==t[0]&&jm==t[1];
+  const act=db.ins.map(p=>({p,k:insDue(p,jy,jm)})).filter(x=>x.k);
+  const tot=act.reduce((s,x)=>s+x.p.a,0),paid=act.filter(x=>(x.p.paid||{})[ym]).reduce((s,x)=>s+x.p.a,0);
+  return`<div class="card"><h3>قسط جدید</h3><input id="it" placeholder="عنوان (مثلاً وام خودرو)" maxlength="40"><label class="lb">مبلغ کلی وام یا خرید (تومان)</label><input id="ip" type="tel" inputmode="numeric" placeholder="مبلغ کلی وام یا خرید (تومان)" oninput="grp(this);calcUI()"><div style="display:flex;gap:8px"><div style="flex:1"><label class="lb">چند ماهه؟</label><input id="in2" type="tel" inputmode="numeric" placeholder="چند ماهه؟" oninput="calcUI()"></div><div style="flex:1"><label class="lb">درصد سود سالانه</label><input id="ir" inputmode="decimal" placeholder="درصد سود سالانه" oninput="calcUI()"></div></div><label class="lb">قسط ماهانه (اختیاری)</label><input id="im" type="tel" inputmode="numeric" placeholder="قسط ماهانه (خالی بگذارید، خودم حساب می‌کنم)" oninput="grp(this);calcUI()"><label class="lb">تاریخ اولین قسط</label>${dpick('sv',jy,jm,defDay())}<div id="icalc" class="calc"></div><button class="pr" onclick="addIns()">ثبت قسط</button><p class="note">قسط ماهانه را خالی بگذارید تا با درصد سود (اقساط مساوی، مانده‌کاهنده) حساب کنم؛ یا قسط را وارد کنید تا درصد سود واقعی را حساب کنم. بقیه‌ی اقساط هر ماه در همان روز اولین قسط است.</p></div>
+  <div class="card"><h3>اقساط ${MONTHS[jm-1]} — ${fmt(paid)} از ${fmt(tot)} پرداخت شد</h3>${act.length?act.map(x=>{const p=x.p,ok=(p.paid||{})[ym],late=isNow&&!ok&&t[2]>p.day;return`<div class="li"><div>${esc(p.t)} <small>قسط ${fa(x.k)} از ${fa(p.n)} · سررسید ${fa(p.day)}م${late?' · <b class="neg">عقب‌افتاده</b>':''}</small></div><div><b>${fmt(p.a)}</b> <button class="${ok?'pr':'ln'}" style="width:auto;padding:6px 10px;margin:0 6px" onclick="payIns('${p.id}','${ym}')">${ok?'✓ پرداخت شد':'پرداخت کن'}</button></div></div>`}).join(''):'<div class="emp">قسطی برای این ماه نیست</div>'}</div>
+  <div class="card"><h3>همه‌ی اقساط</h3>${db.ins.length?db.ins.map(p=>{const pc=Object.keys(p.paid||{}).length,rem=Math.max(0,p.n-pc);return`<div class="li"><div>${esc(p.t)} <small>${fa(pc)} از ${fa(p.n)} پرداخت شده · مانده: ${fmt(rem*p.a)} تومان · مجموع: ${fmt(p.a*p.n)}</small></div><button class="x" onclick="delIns('${p.id}')">✕</button></div>`}).join(''):'<div class="emp">هنوز قسطی ثبت نشده</div>'}</div>`;
+}
+const pm=(P,n,r)=>r==0?P/n:P*r/(1-Math.pow(1+r,-n));
+function solveR(P,n,M){if(M*n<=P)return 0;let lo=0,hi=1;for(let i=0;i<80;i++){const mid=(lo+hi)/2;if(pm(P,n,mid)<M)lo=mid;else hi=mid}return(lo+hi)/2}
+function insCalc(){
+  const P=num($('#ip').value)||0,n=Math.floor(num($('#in2').value))||0,M=num($('#im').value)||0,rate=decN($('#ir').value);
+  if(!(P>0)||!(n>=1))return null;
+  let monthly,eff,note='';
+  if(M>0){monthly=M;eff=solveR(P,n,M)*1200;
+    if(rate>0){const w=Math.round(pm(P,n,rate/1200));if(Math.abs(w-M)>Math.max(1,M*0.01))note='با درصد واردشده، قسط حدود '+fmt(w)+' می‌شد.'}}
+  else{eff=rate;monthly=Math.round(pm(P,n,rate/1200))}
+  const total=monthly*n;
+  return{P,n,monthly,total,interest:total-P,rate:eff,note,given:M>0}}
+function calcUI(){
+  const e=$('#icalc');if(!e)return;const c=insCalc();
+  e.innerHTML=c?`<div class="grid3"><div class="stat g"><small>قسط ماهانه</small><b>${fmt(c.monthly)}</b></div><div class="stat"><small>مجموع بازپرداخت</small><b>${fmt(c.total)}</b></div><div class="stat"><small>سود کل (${fa(Math.round(c.rate*10)/10)}٪)</small><b class="${c.interest<0?'neg':''}">${fmt(c.interest)}</b></div></div>${c.note?`<div class="note" style="margin-top:6px">${c.note}</div>`:''}`:'<div class="note">مبلغ کلی و تعداد ماه را وارد کنید تا محاسبه شود.</div>'}
+async function addIns(){
+  const t=$('#it').value.trim(),c=insCalc(),[y,m,d]=dpGet('sv');
+  if(!t||!c||!(c.monthly>0)||c.n<1||c.n>240){toast('عنوان، مبلغ کلی و تعداد ماه (۱ تا ۲۴۰) را درست وارد کنید');return}
+  if(c.interest<-c.n){toast('قسط ماهانه از مبلغ کلی تقسیم بر ماه کمتر است');return}
+  db.ins.push({id:uid(),t,a:c.monthly,n:c.n,day:d,sy:y,sm:m,P:c.P,rate:Math.round(c.rate*100)/100,paid:{}});await save();jy=y;jm=m;render();toast('قسط ثبت شد')}
+async function payIns(id,ym){
+  const p=db.ins.find(x=>x.id==id);if(!p)return;p.paid=p.paid||{};const eid='ins:'+id+':'+ym;
+  if(p.paid[ym]){delete p.paid[ym];db.exp=db.exp.filter(e=>e.id!=eid)}
+  else{p.paid[ym]=1;const[y,m]=ym.split('-').map(Number);db.exp.push({id:eid,d:iso(y,m,Math.min(p.day,dim(y,m))),a:p.a,c:'اقساط',n:p.t})}
+  await save();render()}
+async function delIns(id){if(!confirm('این قسط حذف شود؟ خرج‌هایی که قبلاً از آن ثبت شده باقی می‌ماند.'))return;db.ins=db.ins.filter(p=>p.id!=id);await save();render()}
+function vCal(){
+  const n=dim(jy,jm),off=(new Date(U(jy,jm)).getUTCDay()+1)%7,by={};mExp().forEach(e=>{const d=jOf(e.d)[2];by[d]=(by[d]||0)+e.a});
+  const t=todayJ(),isT=d=>jy==t[0]&&jm==t[1]&&d==t[2];
+  let g=['ش','ی','د','س','چ','پ','ج'].map(x=>`<div class="h">${x}</div>`).join('')+'<div></div>'.repeat(off);
+  for(let d=1;d<=n;d++)g+=`<button class="d ${by[d]?'has':''} ${isT(d)?'td':''} ${d==sel?'sel':''}" onclick="sel=${d};render()">${fa(d)}${by[d]?`<small>${fmt(by[d]/1000)}k</small>`:''}</button>`;
+  const dayE=mExp().filter(e=>jOf(e.d)[2]==sel);
+  return`<div class="card"><div class="cal">${g}</div></div>
+  <div class="card"><h3>خرج ${fa(sel)} ${MONTHS[jm-1]} — ${fmt(sum(dayE))} تومان</h3>${expList(dayE,true)}
+  <div style="margin-top:12px"><label class="lb">تاریخ خرج</label>${dpick('ev',jy,jm,sel)}<input id="ea" type="tel" inputmode="numeric" placeholder="مبلغ (تومان)" oninput="grp(this)"><select id="ec">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><input id="en" placeholder="توضیح (اختیاری)" maxlength="60"><button class="pr" onclick="addExp()">ثبت خرج</button></div></div>`;
+}
+function vInc(){
+  const a=mInc();
+  return`<div class="card"><h3>ثبت درآمد</h3><input id="ia" type="tel" inputmode="numeric" placeholder="مبلغ دریافتی (تومان)" oninput="grp(this)"><label class="lb">تاریخ دریافت</label>${dpick('iv',jy,jm,defDay())}<input id="in" placeholder="منبع، مثلاً حقوق" maxlength="60"><button class="pr" onclick="addInc()">ثبت درآمد</button></div>
+  <div class="card"><h3>درآمدهای این ماه — ${fmt(sum(a))} تومان</h3>${a.length?a.map(i=>`<div class="li"><div>${esc(i.n||'درآمد')}${i.d?` <small>${fa(jOf(i.d)[2])} ${MONTHS[jOf(i.d)[1]-1]}</small>`:''}</div><div><b>${fmt(i.a)}</b><button class="x" onclick="delInc('${i.id}')">✕</button></div></div>`).join(''):'<div class="emp">درآمدی ثبت نشده</div>'}</div>`;
+}
+function vRep(){
+  const e=mExp(),tot=sum(e),by={};e.forEach(x=>by[x.c]=(by[x.c]||0)+x.a);
+  const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+  return`<div class="card">${statHTML()}</div>
+  ${chartCard()}
+  <div class="card"><h3>پیشنهاد پس‌انداز با هوش مصنوعی</h3><button class="pr sk" id="aib" onclick="askAI()">تحلیل خرج‌های این ماه</button><div id="aiout"></div></div>
+  <div class="card"><h3>خروجی</h3><button class="pr" onclick="exportCSV()">دانلود گزارش ماه (CSV برای اکسل)</button><button class="ln" onclick="backup()">دانلود پشتیبان کامل (JSON)</button><button class="ln" onclick="backupEnc()">🔐 بکاپ رمزنگاری‌شده</button><button class="ln" onclick="pickFile('app')">بازگردانی از فایل بکاپ</button><p class="note">آخرین بکاپ: ${lb()}<br>بازگردانی، موارد جدید فایل را به اطلاعات فعلی اضافه می‌کند و چیزی را پاک نمی‌کند.</p></div>
+  <div class="card"><h3>تنظیمات هوش مصنوعی</h3><input id="sk" type="password" placeholder="کلید API ‏OpenAI (sk-...)" value="${esc(db.set.key)}" dir="ltr"><input id="sm" placeholder="مدل" value="${esc(db.set.model)}" dir="ltr"><button class="pr" onclick="saveSet()">ذخیره تنظیمات</button>
+  <p class="note">کلید و داده‌ها فقط به‌صورت رمزنگاری‌شده روی همین گوشی ذخیره می‌شوند. برای تحلیل، فقط جمع هر دسته و توضیح خرج‌ها (بدون اسم و اطلاعات هویتی) به OpenAI ارسال می‌شود.</p></div>`;
+}
+
+/* ---------- عملیات ---------- */
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+async function addExp(){const a=num($('#ea').value);if(!(a>0)){toast('مبلغ را درست وارد کنید');return}
+  const[y,m,d]=dpGet('ev');db.exp.push({id:uid(),d:iso(y,m,d),a,c:$('#ec').value,n:$('#en').value.trim()});await save();jy=y;jm=m;sel=d;render();toast('خرج ثبت شد')}
+async function delExp(id){db.exp=db.exp.filter(e=>e.id!=id);await save();render()}
+async function addInc(){const a=num($('#ia').value);if(!(a>0)){toast('مبلغ را درست وارد کنید');return}
+  const[y,m,d]=dpGet('iv');db.inc.push({id:uid(),ym:ymk(y,m),d:iso(y,m,d),a,n:$('#in').value.trim()});await save();jy=y;jm=m;render();toast('درآمد ثبت شد')}
+async function delInc(id){db.inc=db.inc.filter(e=>e.id!=id);await save();render()}
+async function saveSet(){db.set.key=$('#sk').value.trim();db.set.model=$('#sm').value.trim()||'gpt-4o-mini';await save();toast('ذخیره شد')}
+
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function exportCSV(){
+  const s=stats(),q=v=>'"'+String(v).replace(/"/g,'""')+'"',L=[['نوع','تاریخ','دسته/منبع','توضیح','مبلغ']];
+  mInc().forEach(i=>L.push(['درآمد',MONTHS[jm-1]+' '+jy,i.n||'',i.n||'',i.a]));
+  [...mExp()].sort((a,b)=>a.d.localeCompare(b.d)).forEach(e=>{const j=jOf(e.d);L.push(['خرج',jy+'/'+p2(jm)+'/'+p2(j[2]),e.c,e.n||'',e.a])});
+  L.push([],['جمع درآمد','','','',s.i],['جمع خرج','','','',s.e],['مانده','','','',s.r]);
+  dl('dakhl-kharj-'+ymk(jy,jm)+'.csv','\ufeff'+L.map(r=>r.map(q).join(',')).join('\n'),'text/csv;charset=utf-8')}
+const clean=()=>{const c=JSON.parse(JSON.stringify(db));c.set.key='';delete c.set.lastBackup;return c};
+const due=()=>(db.inc.length||db.exp.length)&&Date.now()-(db.set.lastBackup||0)>30*864e5;
+const lb=()=>{const t=db.set.lastBackup;if(!t)return'هنوز بکاپی نگرفته‌اید';const d=new Date(t),j=g2j(d.getFullYear(),d.getMonth()+1,d.getDate());return fa(j[2])+' '+MONTHS[j[1]-1]+' '+fa(j[0])};
+async function mark(){db.set.lastBackup=Date.now();await save();render()}
+async function backup(){dl('backup-'+Date.now()+'.json',JSON.stringify(clean()),'application/json');await mark();toast('بکاپ دانلود شد')}
+async function backupEnc(){
+  const pw=prompt('یک رمز برای فایل بکاپ بنویسید (حداقل ۶ کاراکتر). بدون این رمز فایل باز نمی‌شود.');if(!pw)return;
+  if(pw.length<6){toast('رمز بکاپ کوتاه است');return}
+  const s2=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),k=await derive(pw,s2);
+  const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},k,enc.encode(JSON.stringify(clean())));
+  dl('backup-enc-'+Date.now()+'.json',JSON.stringify({enc:1,s:b64(s2),i:b64(iv),d:b64(ct)}),'application/json');await mark();toast('بکاپ رمزنگاری‌شده دانلود شد')}
+function pickFile(m){restoreMode=m;const f=$('#rf');f.value='';f.click()}
+async function onFile(f){
+  if(!f)return;
+  try{
+    if(restoreMode=='lock'&&localStorage.getItem('vault')&&!confirm('اطلاعات و رمز فعلی با بکاپ جایگزین می‌شود. ادامه می‌دهید؟'))return;
+    let j=JSON.parse(await f.text());
+    if(j.enc){const pw=prompt('رمز فایل بکاپ را وارد کنید');if(!pw)return;
+      const k=await derive(pw,ub(j.s));j=JSON.parse(dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub(j.i)},k,ub(j.d))))}
+    if(!Array.isArray(j.inc)||!Array.isArray(j.exp))throw 0;
+    j.inc=j.inc.filter(x=>x&&typeof x.a=='number'&&typeof x.ym=='string'&&typeof x.id=='string').map(x=>({...x,d:(typeof x.d=='string'&&/^\d{4}-\d\d-\d\d$/.test(x.d))?x.d:undefined}));
+    j.exp=j.exp.filter(x=>x&&typeof x.a=='number'&&typeof x.id=='string'&&typeof x.c=='string'&&/^\d{4}-\d\d-\d\d$/.test(x.d));
+    j.ins=(Array.isArray(j.ins)?j.ins:[]).filter(x=>x&&typeof x.id=='string'&&typeof x.t=='string'&&typeof x.a=='number'&&typeof x.n=='number'&&typeof x.day=='number'&&typeof x.sy=='number'&&typeof x.sm=='number').map(x=>({...x,paid:(x.paid&&typeof x.paid=='object')?x.paid:{}}));
+    j.set=Object.assign({key:'',model:'gpt-4o-mini'},j.set||{});
+    if(restoreMode=='lock'){pending=j;showLock();return}
+    const ids=new Set([...db.inc,...db.exp].map(x=>x.id));
+    const ni=j.inc.filter(x=>!ids.has(x.id)),ne=j.exp.filter(x=>!ids.has(x.id));
+    const nn=j.ins.filter(x=>!db.ins.some(y=>y.id==x.id));db.inc.push(...ni);db.exp.push(...ne);db.ins.push(...nn);await save();render();toast(fa(ni.length+ne.length+nn.length)+' مورد جدید بازگردانی شد');
+  }catch(x){toast('فایل بکاپ معتبر نیست یا رمزش اشتباه است')}
+}
+
+async function askAI(){
+  if(!db.set.key){toast('اول کلید API را در تنظیمات وارد کنید');return}
+  const e=mExp();if(!e.length){toast('این ماه خرجی ثبت نشده');return}
+  const s=stats(),by={};e.forEach(x=>{(by[x.c]=by[x.c]||{t:0,n:[]});by[x.c].t+=x.a;if(x.n)by[x.c].n.push(x.n+':'+x.a)});
+  const data=Object.entries(by).map(([c,v])=>`${c}: جمع ${v.t} تومان؛ موارد: ${v.n.slice(0,15).join('، ')||'-'}`).join('\n');
+  const prompt=`درآمد ماه: ${s.i} تومان\nجمع خرج: ${s.e} تومان\nخرج به تفکیک دسته:\n${data}\n\nبه فارسی و کوتاه: کدام خرج‌ها غیرضروری یا قابل کاهش‌اند، چقدر می‌شود پس‌انداز کرد، و ۳ پیشنهاد عملی بده.`;
+  const b=$('#aib'),o=$('#aiout');b.disabled=true;o.textContent='در حال تحلیل...';
+  try{
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+db.set.key},
+      body:JSON.stringify({model:db.set.model||'gpt-4o-mini',messages:[{role:'system',content:'تو یک مشاور مالی شخصی و دقیق هستی که به فارسی ساده جواب می‌دهد.'},{role:'user',content:prompt}]})});
+    const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||r.status);
+    o.textContent=j.choices[0].message.content;
+  }catch(x){o.textContent='خطا: '+x.message}
+  b.disabled=false;
+}
+
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
+let dip=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;if(db)render()});
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+async function doInstall(){if(dip){dip.prompt();await dip.userChoice;dip=null;render()}}
+function installCard(){
+  if(standalone())return'';
+  if(location.protocol=='file:')return'<div class="card"><h3>نصب روی صفحه‌ی اصلی</h3><p class="note">این نسخه از روی فایل باز شده و قابل نصب نیست. همه‌ی فایل‌های پوشه را روی یک آدرس HTTPS بگذارید و برنامه را از همان آدرس باز کنید.</p></div>';
+  if(dip)return'<div class="card"><h3>نصب برنامه</h3><button class="pr sk" onclick="doInstall()">📲 افزودن به صفحه‌ی اصلی</button></div>';
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent))return'<div class="card"><h3>نصب روی آیفون</h3><p class="note">در Safari دکمه‌ی اشتراک‌گذاری (⬆️) را بزنید و «Add to Home Screen» را انتخاب کنید.</p></div>';
+  return'<div class="card"><h3>نصب برنامه</h3><p class="note">از منوی مرورگر (⋮) گزینه‌ی «Install app» یا «Add to Home screen» را بزنید.</p></div>'}
+
+showLock();
+</script>
+</body>
+</html>

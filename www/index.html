@@ -65,6 +65,13 @@ nav button.on{color:var(--em);font-weight:800}
 #aiout{white-space:pre-wrap;line-height:1.9;font-size:14px;margin-top:10px}
 .emp{color:var(--mut);font-size:13px;text-align:center;padding:8px}
 .note{font-size:12px;color:var(--mut);line-height:1.8}
+.lb{display:block;font-size:12px;color:var(--mut);margin:2px 4px 4px}
+.dp{display:flex;gap:6px;margin-bottom:8px}
+.dp select{flex:1;min-width:0;margin:0;padding:11px 6px;text-align:center}
+.calc{margin:4px 0 10px}
+.seg{display:flex;background:var(--sky-l);border-radius:12px;padding:3px;margin-bottom:6px}.seg button{flex:1;border:0;background:none;padding:8px;border-radius:10px;font:inherit;font-size:13px;color:var(--mut)}.seg button.on{background:#fff;color:var(--em);font-weight:800;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.lg{display:flex;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid #e6f1f5;font-size:14px}.lg i{width:12px;height:12px;border-radius:4px;flex:none}.lg span{flex:1}.lg small{color:var(--mut);width:40px;text-align:left}
+.det{background:var(--bg);border-radius:12px;padding:4px 10px;margin:4px 0 6px}.det .li{padding:6px 0;font-size:13px}.arc{cursor:pointer}
 </style>
 </head>
 <body>
@@ -93,6 +100,23 @@ const p2=n=>String(n).padStart(2,'0');
 const fmt=n=>Math.round(n).toLocaleString('fa-IR');
 const fa=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
 const num=s=>+String(s).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٬,،\s]/g,'');
+const decN=s=>parseFloat(String(s).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٫،,]/g,'.'))||0;
+function grp(el){
+  const raw=el.value,pos=el.selectionStart==null?raw.length:el.selectionStart;
+  const before=raw.slice(0,pos).replace(/[^\d۰-۹]/g,'').length;
+  const dg=raw.replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/\D/g,'').replace(/^0+(?=\d)/,'');
+  const out=fa(dg.replace(/\B(?=(\d{3})+(?!\d))/g,'٬'));
+  el.value=out;
+  let c=0,i=0;for(;i<out.length&&c<before;i++)if(/[۰-۹]/.test(out[i]))c++;
+  try{el.setSelectionRange(i,i)}catch(e){}}
+const defDay=()=>{const t=todayJ();return(jy==t[0]&&jm==t[1])?t[2]:1};
+function dOpts(y,m,d){const n=dim(y,m),s=Math.min(d,n);let h='';for(let i=1;i<=n;i++)h+=`<option value="${i}"${i==s?' selected':''}>${fa(i)}</option>`;return h}
+function dpick(id,y,m,d){
+  const t=todayJ()[0],a=Math.min(t-6,y),b=Math.max(t+12,y);let ys='';
+  for(let i=a;i<=b;i++)ys+=`<option value="${i}"${i==y?' selected':''}>${fa(i)}</option>`;
+  return`<div class="dp"><select id="${id}d" aria-label="روز">${dOpts(y,m,d)}</select><select id="${id}m" aria-label="ماه" onchange="dpFix('${id}')">${MONTHS.map((n,i)=>`<option value="${i+1}"${i+1==m?' selected':''}>${n}</option>`).join('')}</select><select id="${id}y" aria-label="سال" onchange="dpFix('${id}')">${ys}</select></div>`}
+function dpFix(id){const y=+$('#'+id+'y').value,m=+$('#'+id+'m').value,d=+$('#'+id+'d').value;$('#'+id+'d').innerHTML=dOpts(y,m,d)}
+const dpGet=id=>[+$('#'+id+'y').value,+$('#'+id+'m').value,+$('#'+id+'d').value];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const todayJ=()=>{const d=new Date();return g2j(d.getFullYear(),d.getMonth()+1,d.getDate())};
 const iso=(y,m,d)=>{const g=j2g(y,m,d);return g[0]+'-'+p2(g[1])+'-'+p2(g[2])};
@@ -162,31 +186,67 @@ function render(){
   $('#mlabel').textContent=MONTHS[jm-1]+' '+fa(jy);
   const T=[['home','🏠','خانه'],['cal','📅','خرج روزانه'],['inc','💰','درآمد'],['ins','🧾','اقساط'],['rep','📊','گزارش']];
   $('#nav').innerHTML=T.map(t=>`<button class="${tab==t[0]?'on':''}" onclick="setTab('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join('');
-  $('#app').innerHTML={home:vHome,cal:vCal,inc:vInc,ins:vIns,rep:vRep}[tab]();
+  $('#app').innerHTML={home:vHome,cal:vCal,inc:vInc,ins:vIns,rep:vRep}[tab]();if(tab=='ins')calcUI();
 }
 function stats(){const i=sum(mInc()),e=sum(mExp());return{i,e,r:i-e}}
 function statHTML(){const s=stats();return`<div class="grid3"><div class="stat g"><small>درآمد</small><b>${fmt(s.i)}</b></div><div class="stat"><small>خرج</small><b>${fmt(s.e)}</b></div><div class="stat ${s.r<0?'':'g'}"><small>مانده</small><b class="${s.r<0?'neg':'pos'}">${fmt(s.r)}</b></div></div>`}
 function expList(a,del){return a.length?a.map(e=>`<div class="li"><div>${esc(e.c)} <small>${esc(e.n||'')}${e.n?' · ':''}${fa(jOf(e.d)[2])} ${MONTHS[jOf(e.d)[1]-1]}</small></div><div><b>${fmt(e.a)}</b>${del?`<button class="x" onclick="delExp('${e.id}')">✕</button>`:''}</div></div>`).join(''):'<div class="emp">هنوز خرجی ثبت نشده</div>'}
 
+let cscope='m',copen=null;
+const PAL=['#0284c7','#0b5a45','#38bdf8','#12795c','#7dd3fc','#34d399','#075985','#a7f3d0','#94a3b8'];
+const colOf=c=>{const i=CATS.indexOf(c);return PAL[i<0?PAL.length-1:i%PAL.length]};
+function togCat(c){copen=copen==c?null:c;render()}
+function chartCard(){
+  const list=cscope=='m'?mExp():db.exp,tot=sum(list),by={};
+  list.forEach(e=>by[e.c]=(by[e.c]||0)+e.a);
+  const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+  const seg=`<div class="seg"><button class="${cscope=='m'?'on':''}" onclick="cscope='m';copen=null;render()">این ماه</button><button class="${cscope=='a'?'on':''}" onclick="cscope='a';copen=null;render()">کل زمان</button></div>`;
+  if(!tot)return`<div class="card" id="pie"><h3>خرج‌ها کجا رفت؟</h3>${seg}<div class="emp">هنوز خرجی ثبت نشده</div></div>`;
+  let off=25,arcs='';
+  rows.forEach(([c,v])=>{const pc=v/tot*100;arcs+=`<circle class="arc" cx="21" cy="21" r="15.915" fill="none" stroke="${colOf(c)}" stroke-width="6.5" stroke-dasharray="${pc} ${100-pc}" stroke-dashoffset="${off}" onclick="togCat('${c}')"></circle>`;off-=pc});
+  const ts=fmt(tot),fs=Math.min(4,15/(ts.length*0.62));
+  const svg=`<svg viewBox="0 0 42 42" role="img" aria-label="نمودار دایره‌ای خرج‌ها" style="width:190px;height:190px;display:block;margin:6px auto"><circle cx="21" cy="21" r="15.915" fill="none" stroke="#e6f1f5" stroke-width="6.5"/>${arcs}<text x="21" y="19.5" text-anchor="middle" font-size="2.8" fill="#5b7a78">جمع خرج</text><text x="21" y="24.6" text-anchor="middle" font-size="${fs}" font-weight="800" fill="#0b5a45">${ts}</text></svg>`;
+  const lg=rows.map(([c,v])=>{
+    let det='';
+    if(copen==c){const g={};list.filter(e=>e.c==c).forEach(e=>{const k=e.n||'بدون توضیح';g[k]=(g[k]||0)+e.a});
+      det='<div class="det">'+Object.entries(g).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([k,a])=>`<div class="li"><span>${esc(k)}</span><b>${fmt(a)}</b></div>`).join('')+'</div>'}
+    return`<div class="lg" onclick="togCat('${c}')"><i style="background:${colOf(c)}"></i><span>${c}</span><b>${fmt(v)}</b><small>${fa(Math.round(v/tot*100))}٪</small></div>${det}`}).join('');
+  return`<div class="card" id="pie"><h3>خرج‌ها کجا رفت؟</h3>${seg}${svg}${lg}<div class="note" style="margin-top:6px">روی هر دسته بزنید تا ببینید دقیقاً کجا خرج شده.</div></div>`;
+}
 function vHome(){
   const s=stats(),pct=s.i>0?Math.min(100,s.e/s.i*100):0,un=db.ins.filter(p=>insDue(p,jy,jm)&&!(p.paid||{})[ymk(jy,jm)]).length;
   const last=[...mExp()].sort((a,b)=>b.d.localeCompare(a.d)||b.id.localeCompare(a.id)).slice(0,5);
   return`${un?'<div class="card" style="background:var(--em-l)"><b>🧾 '+fa(un)+' قسط این ماه پرداخت نشده</b><button class="ln" onclick="setTab(\'ins\')">رفتن به اقساط</button></div>':''}${due()?'<div class="card" style="background:var(--sky-l)"><b>⏰ وقت بکاپ است</b><div class="note">بیش از یک ماه از آخرین بکاپ گذشته.</div><button class="pr sk" style="margin-top:8px" onclick="setTab(\'rep\')">رفتن به بخش بکاپ</button></div>':''}<div class="card">${statHTML()}<div class="note" style="margin-top:10px">${s.i>0?fa(Math.round(pct))+'٪ از درآمد این ماه خرج شده':'ابتدا درآمد ماه را در بخش «درآمد» ثبت کنید'}</div><div class="bar"><i style="width:${pct}%"></i></div></div>
-  <div class="card"><h3>آخرین خرج‌ها</h3>${expList(last,false)}<button class="pr sk" style="margin-top:10px" onclick="setTab('cal')">+ ثبت خرج امروز</button></div>${installCard()}`;
+  ${chartCard()}<div class="card"><h3>آخرین خرج‌ها</h3>${expList(last,false)}<button class="pr sk" style="margin-top:10px" onclick="setTab('cal')">+ ثبت خرج امروز</button></div>${installCard()}`;
 }
 function insDue(p,y,m){const i=y*12+m-(p.sy*12+p.sm);return i>=0&&i<p.n?i+1:0}
 function vIns(){
   const ym=ymk(jy,jm),t=todayJ(),isNow=jy==t[0]&&jm==t[1];
   const act=db.ins.map(p=>({p,k:insDue(p,jy,jm)})).filter(x=>x.k);
   const tot=act.reduce((s,x)=>s+x.p.a,0),paid=act.filter(x=>(x.p.paid||{})[ym]).reduce((s,x)=>s+x.p.a,0);
-  return`<div class="card"><h3>قسط جدید</h3><input id="it" placeholder="عنوان (مثلاً وام خودرو)" maxlength="40"><input id="ia2" type="tel" inputmode="numeric" placeholder="مبلغ هر قسط (تومان)"><div style="display:flex;gap:8px"><input id="in2" type="tel" inputmode="numeric" placeholder="تعداد اقساط"><input id="id2" type="tel" inputmode="numeric" placeholder="روز سررسید (۱ تا ۳۱)"></div><button class="pr" onclick="addIns()">ثبت قسط، از ${MONTHS[jm-1]} ${fa(jy)}</button></div>
+  return`<div class="card"><h3>قسط جدید</h3><input id="it" placeholder="عنوان (مثلاً وام خودرو)" maxlength="40"><label class="lb">مبلغ کلی وام یا خرید (تومان)</label><input id="ip" type="tel" inputmode="numeric" placeholder="مبلغ کلی وام یا خرید (تومان)" oninput="grp(this);calcUI()"><div style="display:flex;gap:8px"><div style="flex:1"><label class="lb">چند ماهه؟</label><input id="in2" type="tel" inputmode="numeric" placeholder="چند ماهه؟" oninput="calcUI()"></div><div style="flex:1"><label class="lb">درصد سود سالانه</label><input id="ir" inputmode="decimal" placeholder="درصد سود سالانه" oninput="calcUI()"></div></div><label class="lb">قسط ماهانه (اختیاری)</label><input id="im" type="tel" inputmode="numeric" placeholder="قسط ماهانه (خالی بگذارید، خودم حساب می‌کنم)" oninput="grp(this);calcUI()"><label class="lb">تاریخ اولین قسط</label>${dpick('sv',jy,jm,defDay())}<div id="icalc" class="calc"></div><button class="pr" onclick="addIns()">ثبت قسط</button><p class="note">قسط ماهانه را خالی بگذارید تا با درصد سود (اقساط مساوی، مانده‌کاهنده) حساب کنم؛ یا قسط را وارد کنید تا درصد سود واقعی را حساب کنم. بقیه‌ی اقساط هر ماه در همان روز اولین قسط است.</p></div>
   <div class="card"><h3>اقساط ${MONTHS[jm-1]} — ${fmt(paid)} از ${fmt(tot)} پرداخت شد</h3>${act.length?act.map(x=>{const p=x.p,ok=(p.paid||{})[ym],late=isNow&&!ok&&t[2]>p.day;return`<div class="li"><div>${esc(p.t)} <small>قسط ${fa(x.k)} از ${fa(p.n)} · سررسید ${fa(p.day)}م${late?' · <b class="neg">عقب‌افتاده</b>':''}</small></div><div><b>${fmt(p.a)}</b> <button class="${ok?'pr':'ln'}" style="width:auto;padding:6px 10px;margin:0 6px" onclick="payIns('${p.id}','${ym}')">${ok?'✓ پرداخت شد':'پرداخت کن'}</button></div></div>`}).join(''):'<div class="emp">قسطی برای این ماه نیست</div>'}</div>
-  <div class="card"><h3>همه‌ی اقساط</h3>${db.ins.length?db.ins.map(p=>{const pc=Object.keys(p.paid||{}).length,rem=Math.max(0,p.n-pc);return`<div class="li"><div>${esc(p.t)} <small>${fa(pc)} از ${fa(p.n)} پرداخت شده · مانده: ${fmt(rem*p.a)} تومان</small></div><button class="x" onclick="delIns('${p.id}')">✕</button></div>`}).join(''):'<div class="emp">هنوز قسطی ثبت نشده</div>'}</div>`;
+  <div class="card"><h3>همه‌ی اقساط</h3>${db.ins.length?db.ins.map(p=>{const pc=Object.keys(p.paid||{}).length,rem=Math.max(0,p.n-pc);return`<div class="li"><div>${esc(p.t)} <small>${fa(pc)} از ${fa(p.n)} پرداخت شده · مانده: ${fmt(rem*p.a)} تومان · مجموع: ${fmt(p.a*p.n)}</small></div><button class="x" onclick="delIns('${p.id}')">✕</button></div>`}).join(''):'<div class="emp">هنوز قسطی ثبت نشده</div>'}</div>`;
 }
+const pm=(P,n,r)=>r==0?P/n:P*r/(1-Math.pow(1+r,-n));
+function solveR(P,n,M){if(M*n<=P)return 0;let lo=0,hi=1;for(let i=0;i<80;i++){const mid=(lo+hi)/2;if(pm(P,n,mid)<M)lo=mid;else hi=mid}return(lo+hi)/2}
+function insCalc(){
+  const P=num($('#ip').value)||0,n=Math.floor(num($('#in2').value))||0,M=num($('#im').value)||0,rate=decN($('#ir').value);
+  if(!(P>0)||!(n>=1))return null;
+  let monthly,eff,note='';
+  if(M>0){monthly=M;eff=solveR(P,n,M)*1200;
+    if(rate>0){const w=Math.round(pm(P,n,rate/1200));if(Math.abs(w-M)>Math.max(1,M*0.01))note='با درصد واردشده، قسط حدود '+fmt(w)+' می‌شد.'}}
+  else{eff=rate;monthly=Math.round(pm(P,n,rate/1200))}
+  const total=monthly*n;
+  return{P,n,monthly,total,interest:total-P,rate:eff,note,given:M>0}}
+function calcUI(){
+  const e=$('#icalc');if(!e)return;const c=insCalc();
+  e.innerHTML=c?`<div class="grid3"><div class="stat g"><small>قسط ماهانه</small><b>${fmt(c.monthly)}</b></div><div class="stat"><small>مجموع بازپرداخت</small><b>${fmt(c.total)}</b></div><div class="stat"><small>سود کل (${fa(Math.round(c.rate*10)/10)}٪)</small><b class="${c.interest<0?'neg':''}">${fmt(c.interest)}</b></div></div>${c.note?`<div class="note" style="margin-top:6px">${c.note}</div>`:''}`:'<div class="note">مبلغ کلی و تعداد ماه را وارد کنید تا محاسبه شود.</div>'}
 async function addIns(){
-  const a=num($('#ia2').value),n=num($('#in2').value),d=num($('#id2').value),t=$('#it').value.trim();
-  if(!t||!(a>0)||!(n>=1&&n<=240)||!(d>=1&&d<=31)){toast('عنوان، مبلغ، تعداد (۱ تا ۲۴۰) و روز سررسید (۱ تا ۳۱) را درست وارد کنید');return}
-  db.ins.push({id:uid(),t,a,n:Math.floor(n),day:Math.floor(d),sy:jy,sm:jm,paid:{}});await save();render();toast('قسط ثبت شد')}
+  const t=$('#it').value.trim(),c=insCalc(),[y,m,d]=dpGet('sv');
+  if(!t||!c||!(c.monthly>0)||c.n<1||c.n>240){toast('عنوان، مبلغ کلی و تعداد ماه (۱ تا ۲۴۰) را درست وارد کنید');return}
+  if(c.interest<-c.n){toast('قسط ماهانه از مبلغ کلی تقسیم بر ماه کمتر است');return}
+  db.ins.push({id:uid(),t,a:c.monthly,n:c.n,day:d,sy:y,sm:m,P:c.P,rate:Math.round(c.rate*100)/100,paid:{}});await save();jy=y;jm=m;render();toast('قسط ثبت شد')}
 async function payIns(id,ym){
   const p=db.ins.find(x=>x.id==id);if(!p)return;p.paid=p.paid||{};const eid='ins:'+id+':'+ym;
   if(p.paid[ym]){delete p.paid[ym];db.exp=db.exp.filter(e=>e.id!=eid)}
@@ -201,18 +261,18 @@ function vCal(){
   const dayE=mExp().filter(e=>jOf(e.d)[2]==sel);
   return`<div class="card"><div class="cal">${g}</div></div>
   <div class="card"><h3>خرج ${fa(sel)} ${MONTHS[jm-1]} — ${fmt(sum(dayE))} تومان</h3>${expList(dayE,true)}
-  <div style="margin-top:12px"><input id="ea" type="tel" inputmode="numeric" placeholder="مبلغ (تومان)"><select id="ec">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><input id="en" placeholder="توضیح (اختیاری)" maxlength="60"><button class="pr" onclick="addExp()">ثبت خرج</button></div></div>`;
+  <div style="margin-top:12px"><label class="lb">تاریخ خرج</label>${dpick('ev',jy,jm,sel)}<input id="ea" type="tel" inputmode="numeric" placeholder="مبلغ (تومان)" oninput="grp(this)"><select id="ec">${CATS.map(c=>`<option>${c}</option>`).join('')}</select><input id="en" placeholder="توضیح (اختیاری)" maxlength="60"><button class="pr" onclick="addExp()">ثبت خرج</button></div></div>`;
 }
 function vInc(){
   const a=mInc();
-  return`<div class="card"><h3>ثبت درآمد ${MONTHS[jm-1]}</h3><input id="ia" type="tel" inputmode="numeric" placeholder="مبلغ دریافتی (تومان)"><input id="in" placeholder="منبع، مثلاً حقوق" maxlength="60"><button class="pr" onclick="addInc()">ثبت درآمد</button></div>
-  <div class="card"><h3>درآمدهای این ماه — ${fmt(sum(a))} تومان</h3>${a.length?a.map(i=>`<div class="li"><div>${esc(i.n||'درآمد')}</div><div><b>${fmt(i.a)}</b><button class="x" onclick="delInc('${i.id}')">✕</button></div></div>`).join(''):'<div class="emp">درآمدی ثبت نشده</div>'}</div>`;
+  return`<div class="card"><h3>ثبت درآمد</h3><input id="ia" type="tel" inputmode="numeric" placeholder="مبلغ دریافتی (تومان)" oninput="grp(this)"><label class="lb">تاریخ دریافت</label>${dpick('iv',jy,jm,defDay())}<input id="in" placeholder="منبع، مثلاً حقوق" maxlength="60"><button class="pr" onclick="addInc()">ثبت درآمد</button></div>
+  <div class="card"><h3>درآمدهای این ماه — ${fmt(sum(a))} تومان</h3>${a.length?a.map(i=>`<div class="li"><div>${esc(i.n||'درآمد')}${i.d?` <small>${fa(jOf(i.d)[2])} ${MONTHS[jOf(i.d)[1]-1]}</small>`:''}</div><div><b>${fmt(i.a)}</b><button class="x" onclick="delInc('${i.id}')">✕</button></div></div>`).join(''):'<div class="emp">درآمدی ثبت نشده</div>'}</div>`;
 }
 function vRep(){
   const e=mExp(),tot=sum(e),by={};e.forEach(x=>by[x.c]=(by[x.c]||0)+x.a);
   const rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
   return`<div class="card">${statHTML()}</div>
-  <div class="card"><h3>خرج به تفکیک دسته</h3>${rows.length?rows.map(r=>`<div style="margin-bottom:10px"><div class="li" style="border:0;padding:0"><span>${r[0]}</span><span>${fmt(r[1])} <small style="display:inline;color:var(--mut)">(${fa(Math.round(r[1]/tot*100))}٪)</small></span></div><div class="bar"><i style="width:${r[1]/tot*100}%"></i></div></div>`).join(''):'<div class="emp">داده‌ای برای نمایش نیست</div>'}</div>
+  ${chartCard()}
   <div class="card"><h3>پیشنهاد پس‌انداز با هوش مصنوعی</h3><button class="pr sk" id="aib" onclick="askAI()">تحلیل خرج‌های این ماه</button><div id="aiout"></div></div>
   <div class="card"><h3>خروجی</h3><button class="pr" onclick="exportCSV()">دانلود گزارش ماه (CSV برای اکسل)</button><button class="ln" onclick="backup()">دانلود پشتیبان کامل (JSON)</button><button class="ln" onclick="backupEnc()">🔐 بکاپ رمزنگاری‌شده</button><button class="ln" onclick="pickFile('app')">بازگردانی از فایل بکاپ</button><p class="note">آخرین بکاپ: ${lb()}<br>بازگردانی، موارد جدید فایل را به اطلاعات فعلی اضافه می‌کند و چیزی را پاک نمی‌کند.</p></div>
   <div class="card"><h3>تنظیمات هوش مصنوعی</h3><input id="sk" type="password" placeholder="کلید API ‏OpenAI (sk-...)" value="${esc(db.set.key)}" dir="ltr"><input id="sm" placeholder="مدل" value="${esc(db.set.model)}" dir="ltr"><button class="pr" onclick="saveSet()">ذخیره تنظیمات</button>
@@ -222,10 +282,10 @@ function vRep(){
 /* ---------- عملیات ---------- */
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 async function addExp(){const a=num($('#ea').value);if(!(a>0)){toast('مبلغ را درست وارد کنید');return}
-  db.exp.push({id:uid(),d:iso(jy,jm,sel),a,c:$('#ec').value,n:$('#en').value.trim()});await save();render();toast('خرج ثبت شد')}
+  const[y,m,d]=dpGet('ev');db.exp.push({id:uid(),d:iso(y,m,d),a,c:$('#ec').value,n:$('#en').value.trim()});await save();jy=y;jm=m;sel=d;render();toast('خرج ثبت شد')}
 async function delExp(id){db.exp=db.exp.filter(e=>e.id!=id);await save();render()}
 async function addInc(){const a=num($('#ia').value);if(!(a>0)){toast('مبلغ را درست وارد کنید');return}
-  db.inc.push({id:uid(),ym:ymk(jy,jm),a,n:$('#in').value.trim()});await save();render();toast('درآمد ثبت شد')}
+  const[y,m,d]=dpGet('iv');db.inc.push({id:uid(),ym:ymk(y,m),d:iso(y,m,d),a,n:$('#in').value.trim()});await save();jy=y;jm=m;render();toast('درآمد ثبت شد')}
 async function delInc(id){db.inc=db.inc.filter(e=>e.id!=id);await save();render()}
 async function saveSet(){db.set.key=$('#sk').value.trim();db.set.model=$('#sm').value.trim()||'gpt-4o-mini';await save();toast('ذخیره شد')}
 
@@ -256,7 +316,7 @@ async function onFile(f){
     if(j.enc){const pw=prompt('رمز فایل بکاپ را وارد کنید');if(!pw)return;
       const k=await derive(pw,ub(j.s));j=JSON.parse(dec.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub(j.i)},k,ub(j.d))))}
     if(!Array.isArray(j.inc)||!Array.isArray(j.exp))throw 0;
-    j.inc=j.inc.filter(x=>x&&typeof x.a=='number'&&typeof x.ym=='string'&&typeof x.id=='string');
+    j.inc=j.inc.filter(x=>x&&typeof x.a=='number'&&typeof x.ym=='string'&&typeof x.id=='string').map(x=>({...x,d:(typeof x.d=='string'&&/^\d{4}-\d\d-\d\d$/.test(x.d))?x.d:undefined}));
     j.exp=j.exp.filter(x=>x&&typeof x.a=='number'&&typeof x.id=='string'&&typeof x.c=='string'&&/^\d{4}-\d\d-\d\d$/.test(x.d));
     j.ins=(Array.isArray(j.ins)?j.ins:[]).filter(x=>x&&typeof x.id=='string'&&typeof x.t=='string'&&typeof x.a=='number'&&typeof x.n=='number'&&typeof x.day=='number'&&typeof x.sy=='number'&&typeof x.sm=='number').map(x=>({...x,paid:(x.paid&&typeof x.paid=='object')?x.paid:{}}));
     j.set=Object.assign({key:'',model:'gpt-4o-mini'},j.set||{});
