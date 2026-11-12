@@ -1,0 +1,8 @@
+{
+  "appId": "com.dakhlkharj.app",
+  "appName": "دخل‌وخرج من",
+  "webDir": "www",
+  "backgroundColor": "#f2faff",
+  "server": { "androidScheme": "https" },
+  "plugins": { "CapacitorHttp": { "enabled": true } }
+}
